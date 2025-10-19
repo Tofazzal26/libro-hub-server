@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express";
 import BookModel from "../model/BookAddModel/BookModel";
+import { ObjectId } from "mongodb";
 
 export const booksRouter = express.Router();
 
@@ -22,6 +23,18 @@ booksRouter.get("/books", async (req: Request, res: Response) => {
   try {
     const result = await BookModel.find();
     res.status(200).send(result);
+  } catch (error) {
+    res
+      .status(500)
+      .send({ data: error, message: "There was a server error", status: 500 });
+  }
+});
+
+booksRouter.delete("/books/:id", async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+    const result = await BookModel.findByIdAndDelete(id);
+    res.status(200).send({ message: "Book delete success", status: 200 });
   } catch (error) {
     res
       .status(500)
