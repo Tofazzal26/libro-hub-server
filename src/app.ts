@@ -1,19 +1,20 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
-import { todosRouter } from "./todos/todos.router";
 import dotenv from "dotenv";
+import { booksRouter } from "./books/books.router";
 dotenv.config();
 
 const app = express();
 app.use(
   cors({
-    origin: ["http://localhost:5173"],
+    origin: ["http://localhost:3000"],
     credentials: true,
   })
 );
 
 app.use(express.json());
-app.use("/", todosRouter);
+
+app.use("/", booksRouter);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello World!");
