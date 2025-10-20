@@ -1,6 +1,5 @@
 import express, { Request, Response } from "express";
 import BookModel from "../model/BookAddModel/BookModel";
-import { ObjectId } from "mongodb";
 
 export const booksRouter = express.Router();
 
@@ -27,6 +26,46 @@ booksRouter.get("/books", async (req: Request, res: Response) => {
     res
       .status(500)
       .send({ data: error, message: "There was a server error", status: 500 });
+  }
+});
+
+booksRouter.get("/books/:id", async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+    const result = await BookModel.findById(id);
+    res.status(200).send(result);
+  } catch (error) {
+    res
+      .status(500)
+      .send({ data: error, message: "There was a server error", status: 500 });
+  }
+});
+
+booksRouter.patch("/books/update/:id", async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id;
+    const allData = req.body;
+    if (allData.copies === 0) {
+      allData.availability = false;
+    } else {
+      allData.availability = true;
+    }
+    const result = await BookModel.findByIdAndUpdate(id, allData, {
+      new: true,
+      runValidators: true,
+    });
+
+    res.status(200).send({
+      message: "Book update success",
+      status: 200,
+      data: result,
+    });
+  } catch (error) {
+    res.status(500).send({
+      data: error,
+      message: "There was a server error",
+      status: 500,
+    });
   }
 });
 
