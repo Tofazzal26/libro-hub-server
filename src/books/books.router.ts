@@ -41,30 +41,30 @@ booksRouter.get("/books/:id", async (req: Request, res: Response) => {
   }
 });
 
-booksRouter.patch("/books/update/:id", async (req: Request, res: Response) => {
+booksRouter.patch("/books/update/:id", async (req, res) => {
   try {
-    const id = req.params.id;
+    const { id } = req.params;
     const allData = req.body;
+
     if (allData.copies === 0) {
       allData.availability = false;
-    } else {
+    } else if (allData.copies > 0) {
       allData.availability = true;
     }
     const result = await BookModel.findByIdAndUpdate(id, allData, {
       new: true,
       runValidators: true,
     });
-
     res.status(200).send({
-      message: "Book update success",
+      message: "Book updated successfully",
       status: 200,
       data: result,
     });
   } catch (error) {
     res.status(500).send({
-      data: error,
       message: "There was a server error",
       status: 500,
+      error,
     });
   }
 });
