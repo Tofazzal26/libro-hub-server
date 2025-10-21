@@ -129,3 +129,14 @@ booksRouter.patch("/borrow/:bookId", async (req: Request, res: Response) => {
     });
   }
 });
+
+booksRouter.get("/borrow", async (req: Request, res: Response) => {
+  try {
+    const result = await BorrowModel.find();
+    res.status(200).send(result);
+  } catch (error) {
+    res
+      .status(500)
+      .send({ data: error, message: "There was a server error", status: 500 });
+  }
+});
