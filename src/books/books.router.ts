@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express";
 import BookModel from "../model/BookAddModel/BookModel";
+import BorrowModel from "../model/BorrowModel/BorrowModel";
 
 export const booksRouter = express.Router();
 
@@ -78,5 +79,53 @@ booksRouter.delete("/books/:id", async (req: Request, res: Response) => {
     res
       .status(500)
       .send({ data: error, message: "There was a server error", status: 500 });
+  }
+});
+
+booksRouter.patch("/borrow/:bookId", async (req: Request, res: Response) => {
+  try {
+    const { bookId } = req.params;
+    const { quantity, dueDate, title, isbn, image } = req.body;
+
+    const existBook = await BookModel.findById(bookId);
+    if (!existBook) {
+      return res.status(404).json({ message: "Book not found" });
+    }
+
+    if (quantity > existBook.copies) {
+      return res
+        .status(400)
+        .json({ message: "Quantity exceeds available copies" });
+    }
+
+    existBook.copies -= quantity;
+    if (existBook.copies <= 0) {
+      existBook.availability = false;
+    }
+
+    await existBook.save();
+
+    const borrowRecord = new BorrowModel({
+      bookId: existBook._id,
+      title,
+      isbn,
+      image,
+      quantity,
+      dueDate,
+    });
+
+    await borrowRecord.save();
+
+    res.status(200).json({
+      message: "Book borrowed successfully",
+      existBook,
+      borrow: borrowRecord,
+    });
+  } catch (error) {
+    res.status(500).send({
+      data: error,
+      message: "There was a server error",
+      status: 500,
+    });
   }
 });
