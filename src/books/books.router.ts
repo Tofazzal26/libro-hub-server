@@ -21,12 +21,25 @@ booksRouter.post("/create-book", async (req: Request, res: Response) => {
 
 booksRouter.get("/books", async (req: Request, res: Response) => {
   try {
-    const result = await BookModel.find();
-    res.status(200).send(result);
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 4;
+    const skip = (page - 1) * limit;
+
+    const totalBooks = await BookModel.countDocuments();
+    const result = await BookModel.find().skip(skip).limit(limit);
+
+    res.status(200).send({
+      books: result,
+      currentPage: page,
+      totalPages: Math.ceil(totalBooks / limit),
+      totalBooks,
+    });
   } catch (error) {
-    res
-      .status(500)
-      .send({ data: error, message: "There was a server error", status: 500 });
+    res.status(500).send({
+      data: error,
+      message: "There was a server error",
+      status: 500,
+    });
   }
 });
 
