@@ -1,6 +1,4 @@
 "use strict";
-// const dotenv = require("dotenv");
-// const mongoose = require("mongoose");
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -15,10 +13,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
-// dotenv.config();
 const ConnectMongoose = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        console.log("Mongo URI:", process.env.MONGO_URI);
         yield mongoose_1.default.connect(process.env.MONGO_URI);
         console.log("MongoDB connected successfully");
     }

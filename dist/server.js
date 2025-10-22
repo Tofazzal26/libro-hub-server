@@ -29,5 +29,3 @@ const bootstrap = () => __awaiter(void 0, void 0, void 0, function* () {
     });
 });
 bootstrap();
-console.log(process.env.MONGO_URI);
-console.log(process.cwd());
